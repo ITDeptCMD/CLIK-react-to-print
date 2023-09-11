@@ -8,6 +8,12 @@ h2.text-lg {
     font-weight: 300;
     color: #0000FF;
   }
+
+  h3.text-lg {
+    text-align: center;
+    font-size: 28px;
+    font-weight: 700;
+  }
   
   h4.text-title {
     font-size:18px;

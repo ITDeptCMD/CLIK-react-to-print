@@ -292,6 +292,7 @@ const Monitoring = () => {
       </MGResponse>
   </s:Body>
 </s:Envelope>`;
+const today = moment().format('YYYY-MM-DD');
 const parser = new XMLParser().parseFromString(xmlData);
 const customerData = {
     cbSubjectCode: parser.getElementsByTagName('cb:MatchedSubject')[0].attributes.CBSubjectCode,
@@ -391,6 +392,9 @@ const componenetRef = useRef();
    <div ref={componenetRef}>
     {/* Subject Data */}
     <div className="p-4">
+        <h2 className="mb-2 text-lg">CREDIT REPORT</h2>
+        <h3 className="my-8 text-lg">{customerData.nameAsId}</h3>
+        <p>Request Date: <b>{today}</b></p>
         <h2 className="mb-2 text-lg">SUBJECT</h2>
         <div>
             <h4 className='text-title'>Subject Data</h4>
@@ -610,7 +614,10 @@ const componenetRef = useRef();
   {/* Credit Details Data */}     
   <div className="p-4">
     <h1 className='font-bold text-lg'>Credit / Financing</h1>
-    <h2 className="mb-2 text-lg font-semibold text-gray-900">Credit / Financing Detail (Requested, Renounced and Refused)</h2>
+    <div>
+        <h4 className='text-title'>Credit / Financing Detail (Requested, Renounced and Refused)</h4>
+        <div class="h-0.5 bg-gray-500 my-2"></div>
+    </div>
     <table className="table-auto">
     <thead>
       <tr>
@@ -651,8 +658,11 @@ const componenetRef = useRef();
   </div>
 
   {/* Credit Details Data 2*/}     
-  <div className="p-4 border border-gray-300 rounded-lg shadow-lg">
-    <h2 className="mb-2 text-lg font-semibold text-gray-900">Credit / Financing Detail (Active, Closed and Closed in Advance)</h2>
+  <div className="p-4">
+  <div>
+        <h4 className='text-title'>Credit / Financing Detail (Active, Closed, Closed in Advanced)</h4>
+        <div class="h-0.5 bg-gray-500 my-2"></div>
+    </div>
     <table className="table-auto">
     <thead>
       <tr>
@@ -676,8 +686,8 @@ const componenetRef = useRef();
     </thead>
     <tbody>
         {commonDatas.map((commonData, index) => (
-          <tr key={index}>
-             <td>{index + 1}</td>
+          <tr key={index} className="border-b">
+            <td>{index + 1}</td>
             <td className='text-center text-sm'>{commonData.CBContractCode}</td>
             <td className='text-center text-sm'>-</td>
             <td className='text-center text-sm'>{commonData.ContractTypeCodeDesc}</td>
