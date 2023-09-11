@@ -1,13 +1,72 @@
-body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
-}
+h2.text-lg {
+    text-align: center;
+    font-size: 28px;
+    font-weight: 300;
+    color: #0000FF;
+  }
+  
+  h4.text-title {
+    font-size:18px;
+    font-weight: 300;
+    color: #0000FF;
+  }
+
+  /* Style the <ul> list items as columns */
+  ul.col-4 {
+    column-count: 4; 
+    column-gap: 10px;
+    list-style: none;
+    width: 100%;
+    padding: 0;
+  }
+
+  ul.col-5 {
+    column-count: 5; 
+    column-gap: 10px;
+    list-style: none;
+    width: 100%;
+    padding: 0;
+  }
+
+  ul.col-2 {
+    column-gap: 10px;
+    list-style: none;
+    width: 100%;
+    padding: 0;
+  }
+  
+  /* Style individual <li> items */
+  li.mb-5 {
+    margin-bottom: 10px; /* Optional: Adjust the margin between list items */
+  }
+
+  ul.col-4 li {
+    margin-bottom: 10px;
+  }
+
+  ul.col-5 li {
+    margin-bottom: 10px;
+  }
+
+  ul.col-5 li b {
+    font-weight: bold;
+    display: block;
+    margin-bottom: 2px; /* Create a new line after the <b> element */
+  }
+  
+  /* Style the <b> element (bold text) within <li> */
+  ul.col-4 li b {
+    font-weight: bold;
+    display: block;
+    margin-bottom: 2px; /* Create a new line after the <b> element */
+  }
+  
+  /* Style the content within <li> */
+  ul.max-w-md li span {
+    font-weight: normal;
+  }
+  
