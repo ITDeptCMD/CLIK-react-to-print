@@ -1,5 +1,9 @@
-import React from "react";
+import React, { useRef } from 'react';
 import XMLParser from 'react-xml-parser'
+import ReactToPrint from 'react-to-print';
+import moment from 'moment';
+import logo from '../assets/clik-logo.png'
+import { rupiah, splitThousand } from '../utils/functions';
 
 const NewEnquiry = () => {
     const xmlData = `<s:Envelope xmlns:s="http://schemas.xmlsoap.org/soap/envelope/">
@@ -290,6 +294,7 @@ const NewEnquiry = () => {
         </MGResponse>
     </s:Body>
 </s:Envelope>`
+const today = moment().format('YYYY-MM-DD');
 const parser = new XMLParser().parseFromString(xmlData);
 const customerData = {
     cbSubjectCode: parser.getElementsByTagName('cb:MatchedSubject')[0].attributes.CBSubjectCode,
@@ -329,28 +334,27 @@ const keyvalueData = {
 
 const addressHistory = parser.getElementsByTagName('cb:AddressHistory');
 const addressHistoryNumbers = [];
-for (let i = 0; i < addressHistory.length; i++) {
+for (let i = 0; i < addressHistory.length -1; i++) {
   const addressHistoryNumber = addressHistory[i].attributes.LastUpdateDate;
   addressHistoryNumbers.push(addressHistoryNumber);
 }
 
 const addressElements = parser.getElementsByTagName('cb:Address');
 const addressNumbers = [];
-for (let i = 0; i < addressElements.length; i++) {
+for (let i = 2; i < addressElements.length - 1; i++) {
   const addressNumber = addressElements[i].attributes;
   addressNumbers.push(addressNumber);
 }
-
-console.log(addressNumbers)
 
 const iddData = parser.getElementsByTagName('cb:IdentificationCode')[1].attributes.IdentityNumber
 
 const contactsElements = parser.getElementsByTagName('cb:Contacts');
 const cellPhoneNumbers = [];
 for (let i = 0; i < contactsElements.length; i++) {
-  const cellPhoneNumber = contactsElements[i].attributes.CellphoneNumber;
+  const cellPhoneNumber = contactsElements[i].attributes;
   cellPhoneNumbers.push(cellPhoneNumber);
 }
+
 const labels = ['Credit / Financing', 'Bond / Securities', 'Irrevocable LC', 'Bank Guarantee', 'Other Facilities'];
 const contractCategories = parser.getElementsByTagName('cb:NumbersSummary');
 const contractNumbers = []
@@ -373,221 +377,388 @@ for (let i = 0; i < commonDataNumbers.length; i++) {
     commonDatas.push(commonData);
 }
 
-    return (
-        <>
-        {/* Subject Data */}
-          <div className="p-4 border border-gray-300 rounded-lg shadow-lg">
-             <h1 className='font-bold'>XML Data</h1>
-           {/* <table className="table-auto">
-         <thead>
-           <tr>
-             <th className="px-4 py-2">Name</th>
-             <th className="px-4 py-2">Data</th>
-           </tr>
-         </thead>
-         <tbody>
-         </tbody>
-       </table> */}
-             <h2 className="mb-2 text-lg font-semibold text-gray-900">Subject Data</h2>
-             <ul className="max-w-md space-y-1 list-disc list-inside">
-                 <li>CB Subject Code: {customerData.cbSubjectCode}</li>
-                 <li>Provider Subject No: -</li>
-                 <li>Last Update Date: {customerData.lastUpdatedDate}</li>
-                 <li>Resident: {customerData.resident}</li>
-                 <li>Name As Id: {customerData.nameAsId}</li>
-                 <li>Full Name: {customerData.nameAsId}</li>
-                 <li>Mother's Name: {customerData.motherName}</li>
-                 <li>Gender: {customerData.gender}</li>
-                 <li>Date of Birth: {customerData.dateOfBirth}</li>
-                 <li>Place of Birth: {customerData.placeOfBirth}</li>
-                 <li>Marital Status: {customerData.maritalStatus}</li>
-                 <li>Educational Status: {customerData.educationalStatus}</li>
-             </ul>
-         </div>
-         {/* Address Data */}
-         <div className="p-4 border border-gray-300 rounded-lg shadow-lg">
-             <h2 className="mb-2 text-lg font-semibold text-gray-900">Address</h2>
-             <ul className="max-w-md space-y-1 list-disc list-inside">
-             {addressHistoryNumbers.map((addressHistoryNumber, index) => (
-               <li key={index}>
-                 {index === 0 ? 'Current Date: ' : 'History Date: '}
-                 {addressHistoryNumber}
-               </li>
-             ))}
-           </ul>
-         </div>
-         {/* ID Data */}
-         <div className="p-4 border border-gray-300 rounded-lg shadow-lg">
-             <h2 className="mb-2 text-lg font-semibold text-gray-900">Identification Documents</h2>
-             <ul className="max-w-md space-y-1 list-disc list-inside">
-                 <li>ID Card: {iddData}</li>
-             </ul>
-         </div>
-         {/* Contacts Data */}
-         <div className="p-4 border border-gray-300 rounded-lg shadow-lg">
-             <h2 className="mb-2 text-lg font-semibold text-gray-900">Contacts</h2>
-             <ul className="max-w-md space-y-1 list-disc list-inside">
-             {cellPhoneNumbers.map((phoneNumber, index) => (
-               <li key={index}>
-                 {index === 0 ? 'Current: ' : 'History: '}
-                 {phoneNumber}
-               </li>
-             ))}
-           </ul>
-         </div>
-         {/* Employee Data */}
-         <div className="p-4 border border-gray-300 rounded-lg shadow-lg">
-             <h2 className="mb-2 text-lg font-semibold text-gray-900">Employee Data</h2>
-             <ul className="max-w-md space-y-1 list-disc list-inside">
-               <li>Occupation: {occupationData.occupation}</li>
-               <li>Work Place: {occupationData.workplace}</li>
-               <li>Employee Sector: {occupationData.employeeSector}</li>
-               <li>Workplace Address: {occupationData.workplaceAddress}</li>
-               <li>Last Update Date: {occupationData.lastUpdatedDate}</li>
-           </ul>
-         </div>
-         {/* Score Data */}
-         <div className="p-4 border border-gray-300 rounded-lg shadow-lg">
-             <h2 className="mb-2 text-lg font-semibold text-gray-900">Score</h2>
-             <ul className="max-w-md space-y-1 list-disc list-inside">
-               <li>Score: {scoreData.scoreRaw}</li>
-               <li>Risk Grade: {scoreData.scoreRange}</li>
-           </ul>
-         </div>
-         {/* Key Values Data */}
-         <div className="p-4 border border-gray-300 rounded-lg shadow-lg">
-             <h2 className="mb-2 text-lg font-semibold text-gray-900">Key Values</h2>
-             <ul className="max-w-md space-y-1 list-disc list-inside">
-               <li>Contracts Number: {keyvalueData.contractNumber}</li>
-               <li>Reporting Providers Number: {keyvalueData.reportingNumber}</li>
-               <li>Total Credit Limit: IDR {keyvalueData.totalCreditLimit}</li>
-               <li>Total Potential Exposure: IDR {keyvalueData.totalPotentialExposure}</li>
-               <li>Total Debit Balance: IDR {keyvalueData.debitBalance}</li>
-               <li>Total Overdue: IDR {keyvalueData.overdue}</li>
-               <li>Currency: {keyvalueData.currency}</li>
-           </ul>
-         </div>
-         {/* Contract Category Data */}     
-         <div className="p-4 border border-gray-300 rounded-lg shadow-lg">
-         <table className="table-auto">
-         <thead>
-           <tr>
-             <th className="px-4 py-2">Contract Category</th>
-             <th className="px-4 py-2">Requested</th>
-             <th className="px-4 py-2">Refused</th>
-             <th className="px-4 py-2">Renounced</th>
-             <th className="px-4 py-2">Active</th>
-             <th className="px-4 py-2">Closed</th>
-           </tr>
-         </thead>
-         <tbody>
-             {contractNumbers.map((contractNumber, index) => (
-               <tr key={index}>
-                  <td>{labels[index]}</td>
-                 <td className='text-center'>{contractNumber.Requested}</td>
-                 <td className='text-center'>{contractNumber.Refused}</td>
-                 <td className='text-center'>{contractNumber.Renounced}</td>
-                 <td className='text-center'>{contractNumber.Active}</td>
-                 <td className='text-center'>{contractNumber.Closed}</td>
-               </tr>
-             ))}
-         </tbody>
-       </table>
-       </div>
-     
-       {/* Credit Details Data */}     
-       <div className="p-4 border border-gray-300 rounded-lg shadow-lg">
-         <h1 className='font-bold text-lg'>Credit / Financing</h1>
-         <h2 className="mb-2 text-lg font-semibold text-gray-900">Credit / Financing Detail (Requested, Renounced and Refused)</h2>
-         <table className="table-auto">
-         <thead>
-           <tr>
-             <th className="px-2 py-2 text-sm">No</th>
-             <th className="px-2 py-2 text-sm">CB Contract Code</th>
-             <th className="px-2 py-2 text-sm">Provider Contract Number</th>
-             <th className="px-2 py-2 text-sm">Contract Type</th>
-             <th className="px-2 py-2 text-sm">Contract Phase</th>
-             <th className="px-2 py-2 text-sm">Role</th>
-             <th className="px-2 py-2 text-sm">Provider Type</th>
-             <th className="px-2 py-2 text-sm">Provider</th>
-             <th className="px-2 py-2 text-sm">Contract Requested Date</th>
-             <th className="px-2 py-2 text-sm">Last Update Date</th>
-             <th className="px-2 py-2 text-sm">Linked Subjects List</th>
-             <th className="px-2 py-2 text-sm">Note</th>
-           </tr>
-         </thead>
-         <tbody>
-             {creditDetails.map((creditDetail, index) => (
-               <tr key={index}>
-                  <td>{index + 1}</td>
-                 <td className='text-center text-sm'>{creditDetail.CBContractCode}</td>
-                 <td className='text-center text-sm'>-</td>
-                 <td className='text-center text-sm'>{creditDetail.ContractTypeDesc}</td>
-                 <td className='text-center text-sm'>{creditDetail.ContractPhaseDesc}</td>
-                 <td className='text-center text-sm'>{creditDetail.RoleDesc}</td>
-                 <td className='text-center text-sm'>{creditDetail.ProviderTypeCodeDesc}</td>
-                 <td className='text-center text-sm'>{creditDetail.ProviderCodeDesc}</td>
-                 <td className='text-center text-sm'>{creditDetail.ContractRequestDate}</td>
-                 <td className='text-center text-sm'>{creditDetail.LastUpdateDate}</td>
-                 <td className='text-center text-sm'>-</td>
-                 <td className='text-center text-sm'>-</td>
-     
-               </tr>
-             ))}
-         </tbody>
-       </table>
-       </div>
-     
-       {/* Credit Details Data 2*/}     
-       <div className="p-4 border border-gray-300 rounded-lg shadow-lg">
-         <h2 className="mb-2 text-lg font-semibold text-gray-900">Credit / Financing Detail (Active, Closed and Closed in Advance)</h2>
-         <table className="table-auto">
-         <thead>
-           <tr>
-             <th className="px-2 py-2 text-sm">No</th>
-             <th className="px-2 py-2 text-sm">CB Contract Code</th>
-             <th className="px-2 py-2 text-sm">Provider Contract Number</th>
-             <th className="px-2 py-2 text-sm">Contract Type</th>
-             <th className="px-2 py-2 text-sm">Contract Phase</th>
-             <th className="px-2 py-2 text-sm">Role</th>
-             <th className="px-2 py-2 text-sm">Start Date</th>
-             <th className="px-2 py-2 text-sm">Due Date</th>
-             <th className="px-2 py-2 text-sm">Collaterals Counter</th>
-             <th className="px-2 py-2 text-sm">Total Collateral Value</th>
-             <th className="px-2 py-2 text-sm">Guarantors Counter</th>
-             <th className="px-2 py-2 text-sm">Provider Type</th>
-             <th className="px-2 py-2 text-sm">Provider</th>
-             <th className="px-2 py-2 text-sm">Last Update Date</th>
-             <th className="px-2 py-2 text-sm">Linked Subjects List</th>
-             <th className="px-2 py-2 text-sm">Note</th>
-           </tr>
-         </thead>
-         <tbody>
-             {commonDatas.map((commonData, index) => (
-               <tr key={index}>
-                  <td>{index + 1}</td>
-                 <td className='text-center text-sm'>{commonData.CBContractCode}</td>
-                 <td className='text-center text-sm'>-</td>
-                 <td className='text-center text-sm'>{commonData.ContractTypeCodeDesc}</td>
-                 <td className='text-center text-sm'>{commonData.ContractPhaseDesc}</td>
-                 <td className='text-center text-sm'>{commonData.RoleDesc}</td>
-                 <td className='text-center text-sm'>{commonData.StartDate}</td>
-                 <td className='text-center text-sm'>{commonData.DueDate}</td>
-                 <td className='text-center text-sm'>-</td>
-                 <td className='text-center text-sm'>-</td>
-                 <td className='text-center text-sm'>-</td>
-                 <td className='text-center text-sm'>{commonData.ProviderTypeCodeDesc}</td>
-                 <td className='text-center text-sm'>{commonData.ProviderCodeDesc}</td>
-                 <td className='text-center text-sm'>{commonData.ReferenceDate}</td>
-                 <td className='text-center text-sm'>-</td>
-                 <td className='text-center text-sm'>-</td>
-               </tr>
-             ))}
-         </tbody>
-       </table>
-       </div>
-        </>
-    )
-}
+const componenetRef = useRef();
+  
+
+  return (
+   <>
+   <div>
+    <ReactToPrint
+    trigger={() => {
+        return <button className='bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded'>Print this PDF</button>
+    }}
+    content={() => componenetRef.current}
+    documentTitle='Click PDF'
+    pageStyle="print" />
+   </div>
+   <div ref={componenetRef}>
+    {/* logo */}
+    <div className='mx-5 flex justify-between'>
+        <div><img src={logo} width={160}/></div>
+        <div>
+            <ul className='list-none'>
+            <li><b>PT. Clik</b></li>
+            <li>Cyber 2 Tower 18th Floor</li>
+            <li>Jl. H.R Rasuna Said Blok X-5 no 13</li>
+            <li>Jakarta - 12950</li>
+            <li>Indonesia</li>
+            <li>Telephone: +62 21 57998243</li>
+            <li>Fax: +62 21 5799 8244</li>
+            </ul>
+        </div>
+    </div>
+    {/* Subject Data */}
+    <div className="p-4">
+        <h2 className="mb-2 text-lg">CREDIT REPORT</h2>
+        <h3 className="my-8 text-lg">{customerData.nameAsId}</h3>
+        <p>Request Date: <b>{today}</b></p>
+        <h2 className="mb-2 text-lg">SUBJECT</h2>
+        <div>
+            <h4 className='text-title'>Subject Data</h4>
+            <div className="border-t-2 border-gray-300 my-2"></div>
+        </div>
+        <ul className="col-4">
+        <li className="mb-2">
+            <span>CB Subject Code</span>
+            <b>{customerData.cbSubjectCode}</b>
+        </li>
+        <li className="mb-2">
+            <span>Name As ID</span>
+            <b>{customerData.nameAsId}</b>
+        </li>
+        <li className="mb-2">
+            <span>Date of Birth</span>
+            <b>{moment(customerData.dateOfBirth).format('YYYY/MM/DD')}</b>
+        </li>
+        <li className="mb-2">
+            <span>Provider Subject No</span>
+            <b>-</b>
+        </li>
+        <li className="mb-2">
+            <span>Full Name</span>
+            <b>{customerData.nameAsId}</b>
+        </li>
+        <li className="mb-2">
+            <span>Place of Birth</span>
+            <b>{customerData.placeOfBirth}</b>
+        </li>
+        <li className="mb-2">
+            <span>Last Update Date</span>
+            <b>{customerData.lastUpdatedDate}</b>
+        </li>
+        <li className="mb-2">
+            <span>Mother's Name</span>
+            <b>{customerData.motherName}</b>
+        </li>
+        <li className="mb-2">
+            <span>Marital Status</span>
+            <b>{customerData.maritalStatus}</b>
+        </li>
+        <li className="mb-2">
+            <span>Resident</span>
+            <b>{customerData.resident}</b>
+        </li>
+        <li className="mb-2">
+            <span>Gender</span>
+            <b>{customerData.gender}</b>
+        </li>
+        <li className="mb-2">
+            <span>Educational Status</span>
+            <b>{customerData.educationalStatus}</b>
+        </li>
+        </ul>
+    </div>
+    {/* Address Data */}
+    <div className="p-4">
+        <div>
+            <h4 className='text-title'>Addresses</h4>
+            <div className="border-t-2 border-gray-300 my-2"></div>
+        </div>
+        <ul className="col-2">
+        {addressNumbers.map((addressNumber, index) => (
+            <li key={index} className="flex flex-col">
+            <div className="border-b-2 border-grey-200 my-3">
+            <div className="flex justify-between">
+                <div>
+                    {index === 0 ? 'Current - Address' : index === 1 ? 'History - Addresses' : ''}
+                </div>
+                {index === 0 || index === 1 ? (
+                    <div>
+                    Last Updated
+                    </div>
+                ) : null}
+                </div>
+            </div>
+           <div className='flex'>
+           <div>
+                {addressNumber.Address}, {addressNumber.SubDistrict}, {addressNumber.District}, {addressNumber.PostalCode}, {addressNumber.Country}
+            </div>
+            <div className='ml-auto'>
+                {addressHistoryNumbers[index] && (
+                <span>
+                    {addressHistoryNumbers[index]}
+                </span>
+                )}
+      </div>
+           </div>
+    </li>
+  ))}
+</ul>
+
+
+    </div>
+    {/* ID Data */}
+    <div className="p-4">
+    <div>
+            <h4 className='text-title'>Identification Documents</h4>
+            <div className="border-t-2 border-gray-300 my-2"></div>
+        </div>
+        <ul className="max-w-md space-y-1 list-disc list-inside">
+            <li>ID CARD: <b>{iddData}</b></li>
+        </ul>
+    </div>
+    {/* Contacts Data */}
+    <div className="p-4">
+    <div>
+    <h4 className='text-title'>Contacts</h4>
+    <div className="border-t-2 border-gray-300 my-2"></div>
+        </div>
+        <ul>
+  {cellPhoneNumbers.map((cellPhoneNumber, index) => (
+    <li key={index} className="flex flex-col">
+        <div className="border-b-2 border-grey-200 my-3">
+            {index === 0 ? 'Current - Contact' : index === 1 ? 'History - Contacts' : ''}
+        </div>
+        <ul className="col-4">
+            <li className="mb-2">
+            <span>Phone Number</span>
+            <b>{cellPhoneNumber.PhoneNumber}</b>
+            </li>
+            <li className="mb-2">
+            <span>Cell Phone Number</span>
+            <b>{cellPhoneNumber.CellphoneNumber}</b>
+            </li>
+            <li className="mb-2">
+            <span>Email Address</span>
+            <b>{cellPhoneNumber.EmailAddress}</b>
+            </li>
+            <li className="mb-2">
+            <span>Last Updated</span>
+            <b>-</b>
+            </li>
+        </ul>
+        </li>
+    ))}
+    </ul>
+    </div>
+    {/* Employee Data */}
+    <div className="p-4">
+    <div>
+        <h4 className='text-title'>Employment Data</h4>
+        <div className="border-t-2 border-gray-300 my-2"></div>
+    </div>
+    <ul className="col-5">
+    <li className="mb-2">
+        <span>Occupation</span>
+        <b>{occupationData.occupation}</b>
+    </li>
+    <li className="mb-2">
+        <span>Work Place</span>
+        <b>{occupationData.workplace}</b>
+    </li>
+    <li className="mb-2">
+        <span>Employee Sector</span>
+        <b>{occupationData.employeeSector}</b>
+    </li>
+    <li className="mb-2">
+        <span>Work Place Address</span>
+        <b>{occupationData.workplaceAddress}</b>
+    </li>
+    <li className="mb-2">
+        <span>Last Update Date</span>
+        <b>{occupationData.lastUpdatedDate}</b>
+    </li>
+    </ul>
+    </div>
+    {/* Score Data */}
+    <div className="p-4">
+    <h2 className="mb-2 text-lg mt-10">CB Score</h2>
+        <ul className="max-w-md space-y-1 list-disc list-inside">
+          <li>Score: {scoreData.scoreRaw}</li>
+          <li>Risk Grade: {scoreData.scoreRange}</li>
+      </ul>
+    </div>
+    {/* Key Values Data */}
+    <div className="p-4">
+    <h2 className="mb-2 text-lg mt-10">CONTRACTS SUMMARY</h2>
+    <div>
+        <h4 className='text-title'>Key Values</h4>
+        <div class="h-0.5 bg-gray-500 my-2"></div>
+    </div>
+    <ul className="col-4">
+    <li className="mb-2">
+        <span>Contract Number</span>
+        <b>{keyvalueData.contractNumber}</b>
+    </li>
+    <li className="mb-2">
+        <span>Total Debit Balance</span>
+        <b>{rupiah(keyvalueData.debitBalance)}</b>
+    </li>
+    <li className="mb-2">
+        <span>Reporting Providers Number</span>
+        <b>{keyvalueData.reportingNumber}</b>
+    </li>
+    <li className="mb-2">
+        <span>Total Overdue</span>
+        <b>{rupiah(keyvalueData.overdue)}</b>
+    </li>
+    <li className="mb-2">
+        <span>Total Credit Limit</span>
+        <b>{rupiah(keyvalueData.totalCreditLimit)}</b>
+    </li>
+    <li className="mb-2">
+        <span>Currency</span>
+        <b>{keyvalueData.currency}</b>
+    </li>
+    <li className="mb-2">
+        <span>Total Potential Exposure</span>
+        <b>{rupiah(keyvalueData.totalPotentialExposure)}</b>
+    </li>
+    </ul>
+    </div>
+    {/* Contract Category Data */}     
+    <div className="p-4">
+    <div>
+    <h4 className='text-title'>Summary by Category and Phase</h4>
+    <div class="h-0.5 bg-gray-500 my-2"></div>
+    </div>
+    <table className="w-full table-fixed">
+    <thead>
+      <tr>
+        <th className="px-4 py-2 text-sm">Contract Category</th>
+        <th className="px-4 py-2 text-sm">Requested</th>
+        <th className="px-4 py-2 text-sm">Refused</th>
+        <th className="px-4 py-2 text-sm">Renounced</th>
+        <th className="px-4 py-2 text-sm">Active</th>
+        <th className="px-4 py-2 text-sm">Closed</th>
+      </tr>
+    </thead>
+    <tbody>
+        {contractNumbers.map((contractNumber, index) => (
+           <tr key={index} className="border-b">
+           <td className="px-4 py-1">{labels[index]}</td>
+           <td className="px-4 py-1 text-center">{contractNumber.Requested}</td>
+           <td className="px-4 py-1 text-center">{contractNumber.Refused}</td>
+           <td className="px-4 py-1 text-center">{contractNumber.Renounced}</td>
+           <td className="px-4 py-1 text-center">{contractNumber.Active}</td>
+           <td className="px-4 py-1 text-center">{contractNumber.Closed}</td>
+         </tr>
+        ))}
+    </tbody>
+  </table>
+  </div>
+
+  {/* Credit Details Data */}     
+  <div className="p-4">
+    <h1 className='font-bold text-lg'>Credit / Financing</h1>
+    <div>
+        <h4 className='text-title'>Credit / Financing Detail (Requested, Renounced and Refused)</h4>
+        <div class="h-0.5 bg-gray-500 my-2"></div>
+    </div>
+    <table className="table-auto">
+    <thead>
+      <tr>
+        <th className="px-2 py-2 text-sm">No</th>
+        <th className="px-2 py-2 text-sm">CB Contract Code</th>
+        <th className="px-2 py-2 text-sm">Provider Contract Number</th>
+        <th className="px-2 py-2 text-sm">Contract Type</th>
+        <th className="px-2 py-2 text-sm">Contract Phase</th>
+        <th className="px-2 py-2 text-sm">Role</th>
+        <th className="px-2 py-2 text-sm">Provider Type</th>
+        <th className="px-2 py-2 text-sm">Provider</th>
+        <th className="px-2 py-2 text-sm">Contract Requested Date</th>
+        <th className="px-2 py-2 text-sm">Last Update Date</th>
+        <th className="px-2 py-2 text-sm">Linked Subjects List</th>
+        <th className="px-2 py-2 text-sm">Note</th>
+      </tr>
+    </thead>
+    <tbody>
+        {creditDetails.map((creditDetail, index) => (
+           <tr key={index} className="border-b">
+            <td>{index + 1}</td>
+            <td className='text-center text-sm'>{creditDetail.CBContractCode}</td>
+            <td className='text-center text-sm'>-</td>
+            <td className='text-center text-sm'>{creditDetail.ContractTypeDesc}</td>
+            <td className='text-center text-sm'>{creditDetail.ContractPhaseDesc}</td>
+            <td className='text-center text-sm'>{creditDetail.RoleDesc}</td>
+            <td className='text-center text-sm'>{creditDetail.ProviderTypeCodeDesc}</td>
+            <td className='text-center text-sm'>{creditDetail.ProviderCodeDesc}</td>
+            <td className='text-center text-sm'>{creditDetail.ContractRequestDate}</td>
+            <td className='text-center text-sm'>{creditDetail.LastUpdateDate}</td>
+            <td className='text-center text-sm'>-</td>
+            <td className='text-center text-sm'>-</td>
+
+          </tr>
+        ))}
+    </tbody>
+  </table>
+  </div>
+
+  {/* Credit Details Data 2*/}     
+  <div className="p-4">
+  <div>
+        <h4 className='text-title'>Credit / Financing Detail (Active, Closed, Closed in Advanced)</h4>
+        <div class="h-0.5 bg-gray-500 my-2"></div>
+    </div>
+    <table className="table-auto">
+    <thead>
+      <tr>
+        <th className="px-2 py-2 text-sm">No</th>
+        <th className="px-2 py-2 text-sm">CB Contract Code</th>
+        <th className="px-2 py-2 text-sm">Provider Contract Number</th>
+        <th className="px-2 py-2 text-sm">Contract Type</th>
+        <th className="px-2 py-2 text-sm">Contract Phase</th>
+        <th className="px-2 py-2 text-sm">Role</th>
+        <th className="px-2 py-2 text-sm">Start Date</th>
+        <th className="px-2 py-2 text-sm">Due Date</th>
+        <th className="px-2 py-2 text-sm">Collaterals Counter</th>
+        <th className="px-2 py-2 text-sm">Total Collateral Value</th>
+        <th className="px-2 py-2 text-sm">Guarantors Counter</th>
+        <th className="px-2 py-2 text-sm">Provider Type</th>
+        <th className="px-2 py-2 text-sm">Provider</th>
+        <th className="px-2 py-2 text-sm">Last Update Date</th>
+        <th className="px-2 py-2 text-sm">Linked Subjects List</th>
+        <th className="px-2 py-2 text-sm">Note</th>
+      </tr>
+    </thead>
+    <tbody>
+        {commonDatas.map((commonData, index) => (
+          <tr key={index} className="border-b">
+            <td>{index + 1}</td>
+            <td className='text-center text-sm'>{commonData.CBContractCode}</td>
+            <td className='text-center text-sm'>-</td>
+            <td className='text-center text-sm'>{commonData.ContractTypeCodeDesc}</td>
+            <td className='text-center text-sm'>{commonData.ContractPhaseDesc}</td>
+            <td className='text-center text-sm'>{commonData.RoleDesc}</td>
+            <td className='text-center text-sm'>{commonData.StartDate}</td>
+            <td className='text-center text-sm'>{commonData.DueDate}</td>
+            <td className='text-center text-sm'>-</td>
+            <td className='text-center text-sm'>-</td>
+            <td className='text-center text-sm'>-</td>
+            <td className='text-center text-sm'>{commonData.ProviderTypeCodeDesc}</td>
+            <td className='text-center text-sm'>{commonData.ProviderCodeDesc}</td>
+            <td className='text-center text-sm'>{commonData.ReferenceDate}</td>
+            <td className='text-center text-sm'>-</td>
+            <td className='text-center text-sm'>-</td>
+          </tr>
+        ))}
+    </tbody>
+  </table>
+  </div>
+   </div>
+
+   </>
+  );
+};
 
 export default NewEnquiry;

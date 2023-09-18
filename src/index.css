@@ -22,6 +22,16 @@ h2.text-lg {
   }
 
   /* Style the <ul> list items as columns */
+  ul.col-3 {
+    column-count: 3; 
+    column-gap: 100px;
+    list-style: none;
+    width: 100%;
+    display: flex;
+  justify-content: center;
+  align-items: center;
+  }
+
   ul.col-4 {
     column-count: 4; 
     column-gap: 10px;
@@ -50,6 +60,10 @@ h2.text-lg {
     margin-bottom: 10px; /* Optional: Adjust the margin between list items */
   }
 
+  ul.col-3 li {
+    margin-bottom: 10px;
+  }
+
   ul.col-4 li {
     margin-bottom: 10px;
   }
@@ -57,15 +71,20 @@ h2.text-lg {
   ul.col-5 li {
     margin-bottom: 10px;
   }
-
-  ul.col-5 li b {
+  
+   ul.col-3 li b {
     font-weight: bold;
     display: block;
     margin-bottom: 2px; /* Create a new line after the <b> element */
   }
-  
-  /* Style the <b> element (bold text) within <li> */
+
   ul.col-4 li b {
+    font-weight: bold;
+    display: block;
+    margin-bottom: 2px; /* Create a new line after the <b> element */
+  }
+
+  ul.col-5 li b {
     font-weight: bold;
     display: block;
     margin-bottom: 2px; /* Create a new line after the <b> element */
@@ -75,4 +94,27 @@ h2.text-lg {
   ul.max-w-md li span {
     font-weight: normal;
   }
-  
+
+  @media print {
+    @page {
+      margin-top: 50px;
+        margin-bottom: 25px;
+    }
+    /* Custom header styles */
+    @page {
+        @top-center {
+            content: "Your custom header content";
+        }
+    }
+
+    /* Custom footer styles */
+    @page {
+        @bottom-left {
+            content: "CONFIDENTIAL";
+        }
+    }
+    div.page-footer, div.footer-info {
+      display: block;
+  }
+}
+
