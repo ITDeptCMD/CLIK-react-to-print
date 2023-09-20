@@ -202,6 +202,7 @@ const Home = () => {
           <div className="grid gap-4 gap-y-2 text-sm grid-cols-1 lg:grid-cols-2">
             <div className="text-gray-600">
               <p className="font-medium text-lg">Data diri</p>
+              <p className="font-medium text-lg my-2">New Enquiry / Data baru</p>
               <p>Isi berdasarkan data diri informasi</p>
             </div>
             <form onSubmit={handleSubmit}>
@@ -298,12 +299,15 @@ const Home = () => {
           </div>
         </div>
       </div>
-      <div className='container max-w-screen-lg mx-auto'>
-                {isLoading && <div>Loading...</div>}
+      <div className='container max-w-screen-lg mx-auto flex justify-between'>
+        {isLoading && <div>Loading...</div>}
 
-                {isError ? <div style={{ color: 'red' }}>Error occurred!</div> : <div style={{ color: 'green' }}>Success!</div>}
-            </div>
+        {isError ? <div style={{ color: 'red' }}>Error occurred!</div> : <div style={{ color: 'green' }}>Success!</div>}
 
+        <a href="/monitoring-enquiry">
+          <button className="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded">Monitoring List</button>
+        </a>
+    </div>
       {responseData && (
         <div className="container max-w-screen-lg mx-auto">
           <div className="bg-white p-2 rounded shadow-md">

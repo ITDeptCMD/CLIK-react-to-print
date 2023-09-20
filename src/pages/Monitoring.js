@@ -195,6 +195,7 @@ const Monitoring = () => {
                     <div className="grid gap-4 gap-y-2 text-sm grid-cols-1 lg:grid-cols-2">
                         <div className="text-gray-600">
                             <p className="font-medium text-lg">Data diri</p>
+                            <p className="font-medium text-lg my-2">Monitoring Enquiry / Data lama</p>
                             <p>Isi berdasarkan data diri informasi</p>
                         </div>
                         <form onSubmit={handleSubmit}>
