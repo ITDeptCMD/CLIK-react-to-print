@@ -1,6 +1,7 @@
 {
   "name": "clik-pdf",
   "version": "0.1.0",
+  "homepage" : "https://clik.capellamultidana.com",
   "private": true,
   "dependencies": {
     "@testing-library/jest-dom": "^5.17.0",
@@ -21,7 +22,7 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build",
+    "build": "react-scripts build && postcss src/styles/tailwind.css -o src/styles/output.css",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },

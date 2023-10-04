@@ -5,6 +5,7 @@ import axios from "axios";
 import XMLParser from "react-xml-parser";
 import moment from "moment";
 import { rupiah } from "../utils/functions";
+import {Link, Route, Routes} from 'react-router-dom';
 
 const Home = () => {
   const [name, setName] = useState("");
@@ -12,6 +13,9 @@ const Home = () => {
   const [gender, setGender] = useState("L");
   const [birth_date, setBirthDate] = useState(moment().format("YYYY-MM-DD"));
   const [address, setAddress] = useState("");
+  const [city, setCity] = useState("");
+  const [cities, setCities] = useState([]);
+  const [zipcode, setZipcode] = useState("");
   const [phone_number, setPhoneNumber] = useState("");
   const [responseData, setResponseData] = useState(null);
   const [isButtonDisabled, setButtonDisabled] = useState(false);
@@ -27,57 +31,32 @@ const Home = () => {
   const labels = ['Credit / Financing', 'Bond / Securities', 'Irrevocable LC', 'Bank Guarantee', 'Other Facilities'];
   const url = process.env.REACT_APP_CLIK_BE_URL;
 
-  const xmlData = `<soapenv:Envelope xmlns:urn="urn:cbs-messagegatewaysoap:2015-01-01" xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
-      <soapenv:Header/>
-      <soapenv:Body xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-         <urn:MGRequest>
-            <urn:Message Idempotence="unique" TimeStamp="2018-11-26T14:42:47.662197+01:00" Id="767676" GroupId="55657" xmlns="urn:cbs-messagegatewaysoap:2015-01-01">
-               <urn:Credential Id="LYGO4770" Password="-@6hKQ1?xu" Domain=""/>
-            </urn:Message>
-            <urn:Product Id="CB_ME_Product" Version="" ServiceId="CBG" xmlns="urn:cbs-messagegatewaysoap:2015-01-01">
-               <cb:CB_ME_ProductInput xmlns:cb="urn:crif-creditbureau:v1">
-                  <cb:Subject>
-                     <cb:Individual DebtorGroupCodeInd="S14" Gender="${gender}" MarriageStatus="2" EducationalStatusCode="04">
-                        <cb:IndividualName NameAsId="${name}" FullName="${name}" MothersName="" />
-                 <cb:BirthData BirthDate="${birth_date}" BirthPlace="Bandung" />
-                        <cb:Address Address="${address}" SubDistrict="" District="" City="" PostalCode="" Country=""/>
-               <cb:IdentificationCode IdentityType="1" IdentityNumber="${ktp_number}" />
-                        <cb:ID NPWP=""/>
-                        <cb:Contact PhoneNumber="" CellphoneNumber="${phone_number}" EmailAddress=""/>
-                     </cb:Individual>
-                  </cb:Subject>
-                  <cb:Purpose PurposeCode="10"/>
-               </cb:CB_ME_ProductInput>
-            </urn:Product>
-         </urn:MGRequest>
-      </soapenv:Body>
-    </soapenv:Envelope>`;
-
-  //     `<soapenv:Envelope xmlns:urn="urn:cbs-messagegatewaysoap:2015-01-01" xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
-  // <soapenv:Header/>
-  // <soapenv:Body xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-  //    <urn:MGRequest>
-  //       <urn:Message Idempotence="unique" TimeStamp="2018-11-26T14:42:47.662197+01:00" Id="767676" GroupId="55657" xmlns="urn:cbs-messagegatewaysoap:2015-01-01">
-  //          <urn:Credential Id="LYGO4770" Password="-@6hKQ1?xu" Domain=""/>
-  //       </urn:Message>
-  //       <urn:Product Id="CB_ME_Product" Version="" ServiceId="CBG" xmlns="urn:cbs-messagegatewaysoap:2015-01-01">
-  //          <cb:CB_ME_ProductInput xmlns:cb="urn:crif-creditbureau:v1">
-  //             <cb:Subject>
-  //                <cb:Individual DebtorGroupCodeInd="S14" Gender="P" MarriageStatus="2" EducationalStatusCode="04">
-  //                   <cb:IndividualName NameAsId="ROSA UTARI" FullName="ROSA UTARI" MothersName="" />
-  //            <cb:BirthData BirthDate="1995-08-15" BirthPlace="Bandung" />
-  //                   <cb:Address Address="JL KYAI HAJI BASRI" SubDistrict="" District="" City="" PostalCode="" Country=""/>
-  //          <cb:IdentificationCode IdentityType="1" IdentityNumber="3179895738878787" />
-  //                   <cb:ID NPWP=""/>
-  //                   <cb:Contact PhoneNumber="" CellphoneNumber="0898553289" EmailAddress=""/>
-  //                </cb:Individual>
-  //             </cb:Subject>
-  //             <cb:Purpose PurposeCode="10"/>
-  //          </cb:CB_ME_ProductInput>
-  //       </urn:Product>
-  //    </urn:MGRequest>
-  // </soapenv:Body>
-  // </soapenv:Envelope>`
+  const xmlData = 
+  `<soapenv:Envelope xmlns:urn="urn:cbs-messagegatewaysoap:2015-01-01" xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
+  <soapenv:Header/>
+  <soapenv:Body xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+     <urn:MGRequest>
+        <urn:Message Idempotence="unique" TimeStamp="2018-11-26T14:42:47.662197+01:00" Id="767676" GroupId="55657" xmlns="urn:cbs-messagegatewaysoap:2015-01-01">
+           <urn:Credential Id="XOLI3937" Password="GE80H131k$" Domain=""/>
+        </urn:Message>
+        <urn:Product Id="CB_ME_Product" Version="" ServiceId="CBG" xmlns="urn:cbs-messagegatewaysoap:2015-01-01">
+           <cb:CB_ME_ProductInput xmlns:cb="urn:crif-creditbureau:v1">
+              <cb:Subject>
+                 <cb:Individual DebtorGroupCodeInd="S14" Gender="${gender}" MarriageStatus="2" EducationalStatusCode="04">
+             <cb:IndividualName NameAsId="${name}" FullName="${name}" MothersName="" />
+             <cb:BirthData BirthDate="${birth_date}" BirthPlace="" />
+             <cb:Address Address="${address}" SubDistrict="" District="" City="${city}" PostalCode="${zipcode}" Country="ID"/>
+             <cb:IdentificationCode IdentityType="1" IdentityNumber="${ktp_number}" />
+             <cb:ID NPWP="" />
+             <cb:Contact PhoneNumber="" CellphoneNumber="${phone_number}" EmailAddress="" />
+             <cb:EmploymentData JobCode="008" Workplace="Olihalus Jakarta" CodeOfBusiness="112000" WorkplaceAddress="Mega Kuningan Jakarta" /> 
+           </cb:Individual>
+              </cb:Subject>
+              <cb:Purpose PurposeCode="10"/>
+           </cb:CB_ME_ProductInput>
+        </urn:Product>
+     </urn:MGRequest>
+  </soapenv:Body></soapenv:Envelope>`
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -101,6 +80,25 @@ const Home = () => {
       .finally(() => {
         setLoading(false);
       });
+  };
+
+  useEffect(() => {
+    axios.post('http://192.168.188.92:18892/Featurex/Ajax/list_dropdown', { "Function" : "Daftar_119_208_408_kabupaten" })
+      .then(response => {
+        const citiesData = response.data.success;
+        const transformedCities = Object.entries(citiesData).map(([key, value]) => ({
+          id: key,
+          name: value
+        }));
+        setCities(transformedCities);
+      })
+      .catch(error => {
+        console.error('Error fetching cities:', error);
+      });
+  }, []);
+
+  const handleCityChange = (e) => {
+    setCity(e.target.value); // Set the selected city ID
   };
 
   useEffect(() => {
@@ -246,40 +244,65 @@ const Home = () => {
                   </div>
 
                   <div className="md:col-span-3">
-                    <label for="city">Tanggal Lahir</label>
-                    <input
-                      type="date"
-                      name="date"
-                      id="date"
-                      className="h-10 border mt-1 rounded px-4 w-full bg-gray-50"
-                      value={birth_date}
-                      onChange={(e) => setBirthDate(e.target.value)}
-                    />
-                  </div>
+                                        <label for="city">Tanggal Lahir</label>
+                                        <input
+                                            type="date"
+                                            name="date"
+                                            id="date"
+                                            className="h-10 border mt-1 rounded px-4 w-full bg-gray-50"
+                                            value={birth_date}
+                                            onChange={(e) => setBirthDate(e.target.value)} />
+                                    </div>
 
-                  <div className="md:col-span-6">
-                    <label for="address">Alamat</label>
-                    <input
-                      type="text"
-                      name="address"
-                      id="address"
-                      className="h-10 border mt-1 rounded px-4 w-full bg-gray-50"
-                      value={address}
-                      onChange={(e) => setAddress(e.target.value)}
-                    />
-                  </div>
+                                    <div className="md:col-span-6">
+                                        <label for="address">Alamat</label>
+                                        <input
+                                            type="text"
+                                            name="address"
+                                            id="address"
+                                            className="h-10 border mt-1 rounded px-4 w-full bg-gray-50"
+                                            value={address}
+                                            onChange={(e) => setAddress(e.target.value)} />
+                                    </div>
 
-                  <div className="md:col-span-2">
-                    <label for="phone_number">No Telp</label>
-                    <input
-                      type="text"
-                      name="zipcode"
-                      id="zipcode"
-                      className="transition-all flex items-center h-10 border mt-1 rounded px-4 w-full bg-gray-50"
-                      value={phone_number}
-                      onChange={(e) => setPhoneNumber(e.target.value)}
-                    />
-                  </div>
+                                    <div className="md:col-span-3">
+                                        <label for="address">Kota</label>
+                                            <select
+                                              name="city"
+                                              id="city"
+                                              className="h-10 border mt-1 rounded px-4 w-full bg-gray-50"
+                                              value={city}
+                                              onChange={handleCityChange}>
+                                              <option value="">Select</option>
+                                              {cities.map((city) => (
+                                                <option key={city.id} value={city.id}>
+                                                  {city.name}
+                                                </option>
+                                              ))}
+                                            </select>
+                                    </div>
+
+                                    <div className="md:col-span-3">
+                                        <label for="address">Kode Pos</label>
+                                        <input
+                                            type="text"
+                                            name="zipcode"
+                                            id="zipcode"
+                                            className="h-10 border mt-1 rounded px-4 w-full bg-gray-50"
+                                            value={zipcode}
+                                            onChange={(e) => setZipcode(e.target.value)} />
+                                    </div>
+
+                                    <div className="md:col-span-2">
+                                        <label for="phone_number">No Telp</label>
+                                        <input
+                                            type="text"
+                                            name="phpnenumber"
+                                            id="phpnenumber"
+                                            className="transition-all flex items-center h-10 border mt-1 rounded px-4 w-full bg-gray-50"
+                                            value={phone_number}
+                                            onChange={(e) => setPhoneNumber(e.target.value)} />
+                                    </div>
 
                   <div className="md:col-span-4 text-right">
                     <div className="inline-flex items-end mt-2">
@@ -304,9 +327,9 @@ const Home = () => {
 
         {isError ? <div style={{ color: 'red' }}>Error occurred!</div> : <div style={{ color: 'green' }}>Success!</div>}
 
-        <a href="/monitoring-enquiry">
+        <Link to="/monitoring-enquiry">
           <button className="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded">Monitoring List</button>
-        </a>
+        </Link>
     </div>
       {responseData && (
         <div className="container max-w-screen-lg mx-auto">
