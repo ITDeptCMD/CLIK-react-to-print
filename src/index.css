@@ -95,6 +95,27 @@ h2.text-lg {
     font-weight: normal;
   }
 
+.borderless-table {
+  display: flex;
+  justify-content: space-between;
+}
+
+.borderless-table table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-right: 10px;
+}
+
+.borderless-table th, .borderless-table td {
+  padding: 8px;
+  text-align: left;
+  font-weight: bold;
+}
+
+.borderless-table th span {
+  font-weight: normal;
+}
+
   @media print {
     @page {
       margin-top: 50px;
