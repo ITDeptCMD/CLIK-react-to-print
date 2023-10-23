@@ -26,6 +26,7 @@ const Home = () => {
   const [isError, setError] = useState(false);
   const [data, setData] = useState({});
   const [commonDatas, setCommonDatas] = useState([]);
+  const [grantedCredits, setGrantedCredits] = useState([]);
   const [creditDatas, setCreditDatas] = useState([]);
   const [cellPhoneNumbers, setCellPhoneNumbers] = useState([]);
   const [contractNumbers, setContractNumbers] = useState([]);
@@ -5737,6 +5738,17 @@ const Home = () => {
     const commonDataNumbers = parser.getElementsByTagName('cb:CommonData');
     const updatedCommonDatas = commonDataNumbers.map(data => data.attributes || {});
     setCommonDatas(updatedCommonDatas);
+    //commonData
+    const grantedNumbers = parser.getElementsByTagName('cb:GrantedCredit');
+    const updatedGrantedNumbers = grantedNumbers.filter(data => {
+    return Object.keys(data.attributes || {}).length > 0;
+    });
+
+    const combinedData2 = updatedCommonDatas.map((data, index) => ({
+      data1: data,
+      data2: updatedGrantedNumbers[index].attributes
+    }));
+    setGrantedCredits(combinedData2);
     //creditData
     const creditDataNumbers = parser.getElementsByTagName('cb:NotGrantedContract');
     const updatedCreditDatas = creditDataNumbers.map(data => data.attributes || {});
@@ -5772,9 +5784,9 @@ const Home = () => {
   }
 
   const componenetRef = useRef();
-
   return (
     <div className="min-h-screen p-6 bg-gray-100 items-center justify-center">
+    {/* form */}
       <div className="container max-w-screen-lg mx-auto">
         <div className="bg-white rounded shadow-lg p-4 px-4 md:p-8 mb-6">
           <div className="grid gap-4 gap-y-2 text-sm grid-cols-1 lg:grid-cols-2">
@@ -5935,6 +5947,7 @@ const Home = () => {
           </div>
         </div>
       </div>
+      {/* table */}
       <div className='container max-w-screen-lg mx-auto flex justify-between'>
         {isLoading && <div>Loading...</div>}
 
@@ -5944,6 +5957,7 @@ const Home = () => {
           <button className="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 hover:border-transparent rounded">Monitoring List</button>
         </Link>
     </div>
+    {/* response */}
       {responseData && (
         <div className="container max-w-screen-lg mx-auto">
           <div className="bg-white p-2 rounded shadow-md">
@@ -6283,9 +6297,6 @@ const Home = () => {
                     <tr>
                       <th className="px-2 py-2 text-sm">No</th>
                       <th className="px-2 py-2 text-sm">CB Contract Code</th>
-                      <th className="px-2 py-2 text-sm">
-                        Provider Contract Number
-                      </th>
                       <th className="px-2 py-2 text-sm">Contract Type</th>
                       <th className="px-2 py-2 text-sm">Contract Phase</th>
                       <th className="px-2 py-2 text-sm">Role</th>
@@ -6295,10 +6306,6 @@ const Home = () => {
                         Contract Requested Date
                       </th>
                       <th className="px-2 py-2 text-sm">Last Update Date</th>
-                      <th className="px-2 py-2 text-sm">
-                        Linked Subjects List
-                      </th>
-                      <th className="px-2 py-2 text-sm">Note</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -6308,7 +6315,6 @@ const Home = () => {
                         <td className="text-center text-sm">
                           {creditData.CBContractCode}
                         </td>
-                        <td className="text-center text-sm">-</td>
                         <td className="text-center text-sm">
                           {creditData.ContractTypeDesc}
                         </td>
@@ -6330,8 +6336,6 @@ const Home = () => {
                         <td className="text-center text-sm">
                           {creditData.LastUpdateDate}
                         </td>
-                        <td className="text-center text-sm">-</td>
-                        <td className="text-center text-sm">-</td>
                       </tr>
                     ))}
                   </tbody>
@@ -6351,65 +6355,69 @@ const Home = () => {
                     <tr>
                       <th className="px-2 py-2 text-sm">No</th>
                       <th className="px-2 py-2 text-sm">CB Contract Code</th>
-                      <th className="px-2 py-2 text-sm">
+                      {/* <th className="px-2 py-2 text-sm">
                         Provider Contract Number
-                      </th>
+                      </th> */}
                       <th className="px-2 py-2 text-sm">Contract Type</th>
                       <th className="px-2 py-2 text-sm">Contract Phase</th>
                       <th className="px-2 py-2 text-sm">Role</th>
                       <th className="px-2 py-2 text-sm">Start Date</th>
                       <th className="px-2 py-2 text-sm">Due Date</th>
-                      <th className="px-2 py-2 text-sm">Collaterals Counter</th>
+                      {/* <th className="px-2 py-2 text-sm">Collaterals Counter</th>
                       <th className="px-2 py-2 text-sm">
                         Total Collateral Value
                       </th>
-                      <th className="px-2 py-2 text-sm">Guarantors Counter</th>
+                      <th className="px-2 py-2 text-sm">Guarantors Counter</th> */}
                       <th className="px-2 py-2 text-sm">Provider Type</th>
                       <th className="px-2 py-2 text-sm">Provider</th>
+                      <th className="px-2 py-2 text-sm">Debit Balance</th>
                       <th className="px-2 py-2 text-sm">Last Update Date</th>
-                      <th className="px-2 py-2 text-sm">
+                      {/* <th className="px-2 py-2 text-sm">
                         Linked Subjects List
                       </th>
-                      <th className="px-2 py-2 text-sm">Note</th>
+                      <th className="px-2 py-2 text-sm">Note</th> */}
                     </tr>
                   </thead>
                   <tbody>
-                    {commonDatas.map((commonData, index) => (
+                    {grantedCredits.map((data, index) => (
                       <tr key={index} className="border-b">
                         <td>{index + 1}</td>
                         <td className="text-center text-sm">
-                          {commonData.CBContractCode}
+                          {data.data1.CBContractCode}
                         </td>
+                        {/* <td className="text-center text-sm">-</td> */}
+                        <td className="text-center text-sm">
+                          {data.data1.ContractTypeCodeDesc}
+                        </td>
+                        <td className="text-center text-sm">
+                          {data.data1.ContractPhaseDesc}
+                        </td>
+                        <td className="text-center text-sm">
+                          {data.data1.RoleDesc}
+                        </td>
+                        <td className="text-center text-sm">
+                          {data.data1.StartDate}
+                        </td>
+                        <td className="text-center text-sm">
+                          {data.data1.DueDate}
+                        </td>
+                        {/* <td className="text-center text-sm">-</td>
                         <td className="text-center text-sm">-</td>
+                        <td className="text-center text-sm">-</td> */}
                         <td className="text-center text-sm">
-                          {commonData.ContractTypeCodeDesc}
+                          {data.data1.ProviderTypeCodeDesc}
                         </td>
                         <td className="text-center text-sm">
-                          {commonData.ContractPhaseDesc}
+                          {data.data1.ProviderCodeDesc}
                         </td>
                         <td className="text-center text-sm">
-                          {commonData.RoleDesc}
+                          {data.data2.DebitBalance.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')}
                         </td>
                         <td className="text-center text-sm">
-                          {commonData.StartDate}
+                          {data.data1.ReferenceDate}
                         </td>
-                        <td className="text-center text-sm">
-                          {commonData.DueDate}
-                        </td>
-                        <td className="text-center text-sm">-</td>
-                        <td className="text-center text-sm">-</td>
-                        <td className="text-center text-sm">-</td>
-                        <td className="text-center text-sm">
-                          {commonData.ProviderTypeCodeDesc}
-                        </td>
-                        <td className="text-center text-sm">
-                          {commonData.ProviderCodeDesc}
-                        </td>
-                        <td className="text-center text-sm">
-                          {commonData.ReferenceDate}
-                        </td>
-                        <td className="text-center text-sm">-</td>
-                        <td className="text-center text-sm">-</td>
+                        {/* <td className="text-center text-sm">-</td>
+                        <td className="text-center text-sm">-</td> */}
                       </tr>
                     ))}
                   </tbody>
