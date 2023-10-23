@@ -20,7 +20,7 @@ const Home = () => {
   const [cities, setCities] = useState([]);
   const [zipcode, setZipcode] = useState("");
   const [phone_number, setPhoneNumber] = useState("");
-  // const [responseData, setResponseData] = useState(null);
+  //const [responseData, setResponseData] = useState(null);
   const [isButtonDisabled, setButtonDisabled] = useState(false);
   const [isLoading, setLoading] = useState(false);
   const [isError, setError] = useState(false);
@@ -47,7 +47,7 @@ const Home = () => {
 			</urn:Message>
 			<urn:Product ServiceId="CBG" Id="CB_NAE_Product" Version="" xmlns="urn:cbs-messagegatewaysoap:2015-01-01">
 				<cb:CB_NAE_ProductInput xmlns:cb="urn:crif-creditbureau:v1">
-					<cb:Subject SubjectRefDate="2023-10-18">
+					<cb:Subject SubjectRefDate="2023-10-23">
 						<cb:Individual DebtorGroupCodeInd="S14" Gender="${gender}" MarriageStatus="2" EducationalStatusCode="04">
 							<cb:IndividualName NameAsId="${name}" FullName="${name}" MothersName="" />
 							<cb:BirthData BirthDate="${birth_date}" BirthPlace="${birth_place}" />
@@ -59,7 +59,7 @@ const Home = () => {
 						</cb:Individual>
 					</cb:Subject>
 					<cb:Application ContractCategoryCode="F01" ContractTypeCode="P05" ContractPhase="RQ" ContractRequestDate="2020-10-10" Currency="IDR">
-						<cb:Credit ApplicationAmount="10000000" DueDate="2023-10-18" OriginalAgreementNumber="24" OriginalAgreementDate="2020-10-29" />
+						<cb:Credit ApplicationAmount="10000000" DueDate="2023-10-23" OriginalAgreementNumber="24" OriginalAgreementDate="2020-10-29" />
 						
 					</cb:Application>
 					<cb:Link Role="B" />
@@ -5807,6 +5807,7 @@ const Home = () => {
                       className="h-10 border mt-1 rounded px-4 w-full bg-gray-50"
                       value={name}
                       onChange={(e) => setName(e.target.value)}
+                      required
                     />
                   </div>
 
@@ -5819,6 +5820,7 @@ const Home = () => {
                       className="h-10 border mt-1 rounded px-4 w-full bg-gray-50"
                       value={ktp_number}
                       onChange={(e) => setKtpNumber(e.target.value)}
+                      required
                     />
                   </div>
 
@@ -5843,7 +5845,8 @@ const Home = () => {
                                             id="birth_date"
                                             className="h-10 border mt-1 rounded px-4 w-full bg-gray-50"
                                             value={birth_date}
-                                            onChange={(e) => setBirthDate(e.target.value)} />
+                                            onChange={(e) => setBirthDate(e.target.value)}
+                                            required />
                                     </div>
 
                                     <div className="md:col-span-3">
@@ -5854,7 +5857,8 @@ const Home = () => {
                                             id="birth_place"
                                             className="h-10 border mt-1 rounded px-4 w-full bg-gray-50"
                                             value={birth_place}
-                                            onChange={(e) => setBirthPlace(e.target.value)} />
+                                            onChange={(e) => setBirthPlace(e.target.value)}
+                                            required />
                                     </div>
 
                                     <div className="md:col-span-6">
@@ -5865,7 +5869,8 @@ const Home = () => {
                                             id="address"
                                             className="h-10 border mt-1 rounded px-4 w-full bg-gray-50"
                                             value={address}
-                                            onChange={(e) => setAddress(e.target.value)} />
+                                            onChange={(e) => setAddress(e.target.value)}
+                                            required />
                                     </div>
 
                                     <div className="md:col-span-3">
@@ -5876,7 +5881,8 @@ const Home = () => {
                                             id="subdistrict"
                                             className="h-10 border mt-1 rounded px-4 w-full bg-gray-50"
                                             value={subdistrict}
-                                            onChange={(e) => setSubDistrict(e.target.value)} />
+                                            onChange={(e) => setSubDistrict(e.target.value)}
+                                            required />
                                     </div>
 
                                     <div className="md:col-span-3">
@@ -5887,7 +5893,8 @@ const Home = () => {
                                             id="district"
                                             className="h-10 border mt-1 rounded px-4 w-full bg-gray-50"
                                             value={district}
-                                            onChange={(e) => setDistrict(e.target.value)} />
+                                            onChange={(e) => setDistrict(e.target.value)}
+                                            required />
                                     </div>
 
                                     <div className="md:col-span-3">
@@ -5915,7 +5922,8 @@ const Home = () => {
                                             id="zipcode"
                                             className="h-10 border mt-1 rounded px-4 w-full bg-gray-50"
                                             value={zipcode}
-                                            onChange={(e) => setZipcode(e.target.value)} />
+                                            onChange={(e) => setZipcode(e.target.value)}
+                                            required />
                                     </div>
 
                                     <div className="md:col-span-2">
@@ -5926,7 +5934,8 @@ const Home = () => {
                                             id="phpnenumber"
                                             className="transition-all flex items-center h-10 border mt-1 rounded px-4 w-full bg-gray-50"
                                             value={phone_number}
-                                            onChange={(e) => setPhoneNumber(e.target.value)} />
+                                            onChange={(e) => setPhoneNumber(e.target.value)}
+                                            required />
                                     </div>
 
                   <div className="md:col-span-4 text-right">
